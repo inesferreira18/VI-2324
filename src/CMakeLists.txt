@@ -33,7 +33,7 @@ add_library(
 )
 
 add_library(LibLight INTERFACE)
-target_include_directories(LibRays INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/Light)
+target_include_directories(LibLight INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/Light)
 
 add_library(
         LibPrimitive

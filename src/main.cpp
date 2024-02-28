@@ -31,7 +31,7 @@ int main(int argc, const char * argv[]) {
     double cpu_time_used;
     
     //success = scene.Load("../VI-RT/Scene/tinyobjloader/models/cornell_box.obj");
-    success = scene.Load("/Users/Marta/Desktop/VI/VI-RT/VI-RT/src/Scene/tinyobjloader/models/cornell_box.obj");
+    success = scene.Load("/Users/Marta/Desktop/VI/src/Scene/tinyobjloader/models/cornell_box.obj");
 
     
     if (!success) {
