@@ -19,7 +19,9 @@
 #include "Light/AreaLight.hpp"
 
 #include <time.h>
+#include <filesystem>
 
+namespace fs = std::filesystem;
 
 int main(int argc, const char * argv[]) {
     Scene scene;
@@ -29,11 +31,12 @@ int main(int argc, const char * argv[]) {
     bool success;
     clock_t start, end;
     double cpu_time_used;
-    
-    //success = scene.Load("../VI-RT/Scene/tinyobjloader/models/cornell_box.obj");
-    success = scene.Load("/Users/Marta/Desktop/VI/src/Scene/tinyobjloader/models/cornell_box.obj");
 
-    
+    fs::path currentPath = fs::current_path();
+    fs::path path = currentPath /".." / "src" / "Scene" / "tinyobjloader" / "models" / "cornell_box.obj";
+    std::string pathStr = path.string();
+    success = scene.Load(pathStr);
+
     if (!success) {
         std::cout << "ERROR!! :o\n";
         return 1;

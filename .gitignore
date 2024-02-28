@@ -12,3 +12,8 @@ src/out/
 /build/LibCamera.dir/Debug
 /build/Debug
 /build/CMakeFiles
+/build/*.vcxproj.*
+/build/*.vcxproj
+/build/*.txt
+/build/*.cmake
+/build/*.sln
