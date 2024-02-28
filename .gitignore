@@ -1,4 +1,14 @@
 .vs/
 src/CMakeSettings.json
 src/out/
-build/
+
+/build/Win32/Debug/ZERO_CHECK
+/build/main.dir/Debug
+/build/LibShader.dir/Debug
+/build/LibScene.dir/Debug
+/build/LibRenderer.dir/Debug
+/build/LibPrimitive.dir/Debug
+/build/LibImage.dir/Debug
+/build/LibCamera.dir/Debug
+/build/Debug
+/build/CMakeFiles
