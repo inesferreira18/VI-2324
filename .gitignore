@@ -1,4 +1,4 @@
 .vs/
-.src/CMakeSettings.json
-.src/out/
-.build/
+src/CMakeSettings.json
+src/out/
+build/
