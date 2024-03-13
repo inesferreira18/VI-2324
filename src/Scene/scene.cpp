@@ -67,11 +67,43 @@ bool Scene::Load (const std::string &fname) {
         return false;
     }
     
-    //PrintInfo (myObjReader);
+    PrintInfo (myObjReader);
 
     // convert loader's representation to my representation
+    attrib_t attribs = myObjReader.GetAttrib();                                     // vertices, normals, texCoords
+    const std::vector<tinyobj::shape_t> shapes = myObjReader.GetShapes();           // primitives
+    const std::vector<tinyobj::material_t> materials = myObjReader.GetMaterials();  // materials
+    
+    // Load Materials
+    for (auto it_mat = materials.begin(); it_mat != materials.end(); it_mat++) {
+        Phong* p = new Phong();
 
-    // your code here
+        p->Ka = RGB(it_mat->ambient[0], it_mat->ambient[1], it_mat->ambient[2]);
+        p->Kd = RGB(it_mat->diffuse[0], it_mat->diffuse[1], it_mat->diffuse[2]);
+        p->Ks = RGB(it_mat->specular[0], it_mat->specular[1], it_mat->specular[2]);
+        p->Kt = RGB(it_mat->transmittance[0], it_mat->transmittance[1], it_mat->transmittance[2]);
+        p->Ns = it_mat->shininess;
+    }
+
+    // Load Primitives
+    for (auto it_shape = shapes.begin(); it_shape != shapes.end(); it_shape++) { 
+        // A shape has a name, a mesh, lines and points
+
+        Mesh* mesh = new Mesh();
+        Primitive* prim = new Primitive();
+
+        // A Mesh is from the type Geometry
+        prim->g = mesh;                          
+
+        // assume all faces in the mesh have the same material
+        prim->material_ndx = it_shape->mesh.material_ids[0]; 
+
+
+
+
+    }
+
+
     return true;
 }
 

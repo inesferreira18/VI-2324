@@ -25,6 +25,7 @@ bool Mesh::intersect (Ray r, Intersection *isect) {
     bool intersect = true, intersect_this_face;
     Intersection min_isect, curr_isect;
     float min_depth=MAXFLOAT;
+
     // intersect the ray with the mesh BB
     if (!bb.intersect(r)) return false;
     
