@@ -66,8 +66,8 @@ public:
         }
 
         
-        float tBoxMin = std::max(txNear, tyNear, tzNear);
-        float tBoxMax = std::min(txFar, tyFar, tzFar);
+        float tBoxMin = std::max(std::max(txNear, tyNear), tzNear);
+        float tBoxMax = std::min(std::min(txFar, tyFar), tzFar);
         
 
         return tBoxMin <= tBoxMax;
