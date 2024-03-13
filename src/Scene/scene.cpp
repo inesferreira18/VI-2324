@@ -86,23 +86,95 @@ bool Scene::Load (const std::string &fname) {
     }
 
     // Load Primitives
-    for (auto it_shape = shapes.begin(); it_shape != shapes.end(); it_shape++) { 
+    for (auto it_shape = shapes.begin(); it_shape != shapes.end(); it_shape++) {
         // A shape has a name, a mesh, lines and points
 
         Mesh* mesh = new Mesh();
         Primitive* prim = new Primitive();
 
         // A Mesh is from the type Geometry
-        prim->g = mesh;                          
+        prim->g = mesh;
 
         // assume all faces in the mesh have the same material
-        prim->material_ndx = it_shape->mesh.material_ids[0]; 
+        prim->material_ndx = it_shape->mesh.material_ids[0];
+
+        // Load vertices
+        for (size_t i = 0; i < attribs.vertices.size(); i += 3) {
+            tinyobj::real_t vx = attribs.vertices[i];
+            tinyobj::real_t vy = attribs.vertices[i + 1];
+            tinyobj::real_t vz = attribs.vertices[i + 2];
+            mesh->vertices.push_back(Point(vx, vy, vz));
+        }
+        mesh->numVertices = mesh->vertices.size();
 
 
+        // initially set BB.min and BB.max to be the first vertex
+        const int V1st = it_shape->mesh.indices.begin()->vertex_index * 3;
+        mesh->bb.min = mesh->vertices[V1st];
+        mesh->bb.max = mesh->vertices[V1st];
+        //....................................................................................
+      
+      
+        // add faces and vertices
+        std::set<rehash> vert_rehash;
+
+        for (auto v_it = it_shape->mesh.indices.begin(); v_it != it_shape->mesh.indices.end(); ) {
+            Face* f = new Face;
+            Point myVtcs[3];
+
+            // process 3 vertices
+            for (int v = 0; v < 3; v++) {
+                const int objNdx = v_it->vertex_index;
+                myVtcs[v].set(mesh->vertices[objNdx * 3].X, mesh->vertices[objNdx * 3].Y, mesh->vertices[objNdx * 3].Z);
+
+                if (v == 0) {
+                    f->bb.min.set(myVtcs[0].X, myVtcs[0].Y, myVtcs[0].Z);
+                    f->bb.max.set(myVtcs[0].X, myVtcs[0].Y, myVtcs[0].Z);
+                }
+                else f->bb.update(myVtcs[v]);
 
 
+                // add vertex to mesh if new
+                rehash new_vert = { objNdx, 0 };
+                auto known_vert = vert_rehash.find(new_vert);
+
+                if (known_vert == vert_rehash.end()) { // new vertice, add it to the mesh
+                    new_vert.ourNdx = mesh->numVertices;
+                    vert_rehash.insert(new_vert);
+                    mesh->vertices.push_back(myVtcs[v]); 
+                    mesh->numVertices++;
+
+                    // register in the face
+                    f->vert_ndx[v] = new_vert.ourNdx; 
+                    mesh->bb.update(myVtcs[v]);
+                }
+                else f->vert_ndx[v] = known_vert->ourNdx;
+                v_it++; // next vertice within this face (there are 3)
+            }
+
+
+            // add face to mesh: compute the geometric normal
+            Vector v1 = myVtcs[0].vec2point(myVtcs[1]);
+            Vector v2 = myVtcs[0].vec2point(myVtcs[2]);
+            
+            //f->edge1 = v1;                                     AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+            //f->edge2 = v2;
+            
+            Vector normal = v1.cross(v2);
+            normal.normalize();
+            f->geoNormal.set(normal);
+
+            //f->FaceID = FaceID++;                              AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+            
+            // add face to mesh
+            mesh->faces.push_back(*f); 
+            mesh->numFaces++;
+        }
+
+        // add primitive to scene
+        prims.push_back(prim); 
+        numPrimitives++;
     }
-
 
     return true;
 }
