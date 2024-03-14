@@ -17,8 +17,9 @@ const float MAXFLOAT = std::numeric_limits<float>::max();
 
 bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
 
+    if (!f.bb.intersect(r)) return false;
 
-    return false;
+    return true;
 }
 
 bool Mesh::intersect (Ray r, Intersection *isect) {

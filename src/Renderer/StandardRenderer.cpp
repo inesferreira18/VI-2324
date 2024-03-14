@@ -12,7 +12,7 @@ void StandardRenderer::Render () {
     int x,y;
 
     // get resolution from the camera
-    // ...
+    cam->getResolution(&W,&H);
     
     // main rendering loop: get primary rays from the camera until done
     for (y=0 ; y< H ; y++) {  // loop over rows
@@ -23,7 +23,8 @@ void StandardRenderer::Render () {
             RGB color;
           
             // Generate Ray (camera)
-            // ...
+			cam->GenerateRay(x,y,&primary,NULL);
+
             
             // trace ray (scene)
             // ...
@@ -34,6 +35,6 @@ void StandardRenderer::Render () {
             // write the result into the image frame buffer (image)
             img->set(x,y,color);
             
-        } // loop over columns
-    }   // loop over rows
+        }
+    }
 }
