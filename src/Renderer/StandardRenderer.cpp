@@ -25,13 +25,12 @@ void StandardRenderer::Render () {
             // Generate Ray (camera)
 			cam->GenerateRay(x,y,&primary,NULL);
 
-            
             // trace ray (scene)
-            // ...
+            intersected = scene->trace(primary, &isect);
             
             // shade this intersection (shader) - remember: depth=0
-            // ...
-            
+            color = shd->shade(intersected,isect,0);                          
+
             // write the result into the image frame buffer (image)
             img->set(x,y,color);
             

@@ -116,7 +116,7 @@ bool Scene::Load (const std::string &fname) {
       
       
         // add faces and vertices
-        std::set<rehash> vert_rehash;
+        //std::set<rehash> vert_rehash;
 
         for (auto v_it = it_shape->mesh.indices.begin(); v_it != it_shape->mesh.indices.end(); ) {
             Face* f = new Face;
@@ -135,7 +135,7 @@ bool Scene::Load (const std::string &fname) {
 
 
                 // add vertex to mesh if new
-                rehash new_vert = { objNdx, 0 };
+                /*rehash new_vert = {objNdx, 0};
                 auto known_vert = vert_rehash.find(new_vert);
 
                 if (known_vert == vert_rehash.end()) { // new vertice, add it to the mesh
@@ -149,7 +149,7 @@ bool Scene::Load (const std::string &fname) {
                     mesh->bb.update(myVtcs[v]);
                 }
                 else f->vert_ndx[v] = known_vert->ourNdx;
-                v_it++; // next vertice within this face (there are 3)
+                v_it++; // next vertice within this face (there are 3)*/
             }
 
 

@@ -7,14 +7,45 @@
 
 #include "perspective.hpp"
 
-void Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter) {
+Perspective::Perspective(const Point Eye, const Point At, const Vector Up, const int W, const int H, const float fovW, const float fovH) : Eye(Eye), At(At), Up(Up), W(W), H(H), fovW(fovW), fovH(fovH) {
+    // -Forward Vector
+    Vector F = Vector(At.X - Eye.X, At.Y - Eye.Y, At.Z - Eye.Z);
+    F.normalize();
+
+    // Right Vector
+    Vector R = F.cross(Up);
+    R.normalize();
+
+    // Up normalized
+
+    // Set the matrix c2w
+    Vector aux;
+    for (int i = 0; i < 3; i++) {
+        if (i == 0) {
+            aux = R;
+        }
+        else {
+            if (i == 1) {
+                aux = Up;
+            }
+            else {
+                aux = F;
+            }
+        }
+        c2w[i][0] = aux.X;
+        c2w[i][1] = aux.Y;
+        c2w[i][2] = aux.Z;
+    }
+}
+
+bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter) {
     //To screen space
-    float xs = (2 * (x + 0.5) / W) - 1;
-    float ys = ((2 * (H - y - 1) + 0.5) / H) - 1;
+    float xs = (2.0 * (x + 0.5) / W) - 1.0;
+    float ys = ((2.0 * (H - y - 1.0) + 0.5) / H) - 1.0;
 
     //To camera space
-    float xc = xs * tan(fovW / 2);
-    float yc = ys * tan(fovH / 2);
+    float xc = xs * tan(fovW / 2.0);
+    float yc = ys * tan(fovH / 2.0);
 
     float auxDir[3];
     for (int i =0;i<3;i++){
@@ -28,4 +59,11 @@ void Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
     r->dir.set(auxVector);
 
 	r->o.set(Eye.X, Eye.Y, Eye.Z);
+
+    return true;
+}
+
+void Perspective::getResolution(int* _W, int* _H) {
+    *_W = W;
+    *_H = H;
 }

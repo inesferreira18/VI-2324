@@ -24,7 +24,7 @@ bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
     // also we require the ray to incide on the object on the same side
     // as the normal. i.e. dot(normal,r.dir) < EPSILON
     const float par = normal.dot(r.dir);
-    if (par>(-EPSILON)) {
+    if (par > (-EPSILON)) {
         return false;    // This ray is parallel to this triangle.
     }
 
@@ -32,14 +32,14 @@ bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
     // r.o - v0 = t * r.dir + u (v1-v0) + v (v2-v0)
     // there are 3 unknowns (t,u,v)
     // and 3 equations (for XX, YY, ZZ)
-    
+
     Vector h, s, q;
     Vector edge1 = Vector(vertices[vert_ndx[0]]);
-    float a,ff,u,v;
+    float a, ff, u, v;
 
     h = r.dir.cross(edge2);
     a = edge1.dot(h);
-    ff = 1.0/a;
+    ff = 1.0 / a;
     s = vertices[vert_ndx[0]].vec2point(r.o);
     u = ff * s.dot(h);
     if (u < 0.0 || u > 1.0) {
@@ -54,8 +54,8 @@ bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
     float t = ff * edge2.dot(q);
     if (t > EPSILON) // ray intersection
     {
-        Point pHit = r.o + t* r.dir;
-        
+        Point pHit = r.o + t * r.dir;
+
         // Fill Intersection data from triangle hit : pag 165
         Vector wo = -1.f * r.dir;
         // make sure the normal points to the same side of the surface as wo
@@ -70,7 +70,7 @@ bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
 
         return true;
     }
-    else  {// This means that there is a line intersection but not a ray intersection.
+    else {// This means that there is a line intersection but not a ray intersection.
         return false;
     }
 }

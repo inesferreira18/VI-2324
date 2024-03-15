@@ -86,11 +86,6 @@ add_library(LibUtils INTERFACE)
 target_include_directories(LibUtils INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/utils)
 
 
-# Set languages (c++)
-#set_target_properties(LibLight PROPERTIES LINKER_LANGUAGE CXX)
-#set_target_properties(LibRays PROPERTIES LINKER_LANGUAGE CXX)
-#set_target_properties(LibUtils PROPERTIES LINKER_LANGUAGE CXX)
-
 # Link libraries
 target_link_libraries(main LibCamera) 
 target_link_libraries(main LibPrimitive)
