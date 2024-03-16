@@ -14,6 +14,7 @@
 typedef struct Primitive {
     Geometry *g;
     int material_ndx;
+    std::string name;
 } Primitive;
 
 #endif /* primitive_hpp */

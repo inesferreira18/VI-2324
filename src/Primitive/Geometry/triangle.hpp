@@ -17,8 +17,9 @@ public:
     Point v1, v2, v3;
     Vector normal;           // geometric normal
     Vector edge1, edge2;
-    BB bb;      // face bounding box
-                // this is min={0.,0.,0.} , max={0.,0.,0.} due to the Point constructor
+    BB bb;                   // face bounding box
+                                // this is min={0.,0.,0.} , max={0.,0.,0.} due to the Point constructor
+
     bool intersect (Ray r, Intersection *isect);
     bool isInside(Point p);
     
@@ -31,27 +32,8 @@ public:
         bb.update(v3);
     }
     
-    // Heron's formula
-    // https://www.mathopenref.com/heronsformula.html
-    float area () {
-        
-        // ...
-        
-        //const float A = ...
-        const float A = 1.f;
-
-        return A;
-    }
-    float points_area (Point v1, Point v2, Point v3) {
-        
-        // ...
-        
-        //const float A = ...
-        const float A = 1.f;
-
-        return A;
-
-    }
+    float area();
+    float points_area(Point v1, Point v2, Point v3);
 };
 
 #endif /* triangle_hpp */

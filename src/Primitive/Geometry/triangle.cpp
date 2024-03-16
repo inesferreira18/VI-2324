@@ -12,8 +12,7 @@
 // https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
 // Moller Trumbore intersection algorithm
 bool Triangle::intersect(Ray r, Intersection *isect) {
-
-    
+        
     if (!bb.intersect(r)) {
         return false;
     }
@@ -86,4 +85,30 @@ bool Triangle::isInside(Point p) {
     
    /* Check if sum of A1, A2 and A3 is same as A */
    return (A == A1 + A2 + A3);
+}
+
+
+// Heron's formula
+// https://www.mathopenref.com/heronsformula.html
+float Triangle::area() { 
+    // area
+    float A = points_area(v1, v2, v3);
+
+    return A;
+}
+
+
+float Triangle::points_area(Point v1, Point v2, Point v3) {
+    // distances from v1 to v2, v1 to v3 an v2 to v3
+    float a = sqrt(pow(v1.X - v2.X, 2) + pow(v1.Y - v2.Y, 2) + pow(v1.Z - v2.Z, 2));
+    float b = sqrt(pow(v1.X - v3.X, 2) + pow(v1.Y - v3.Y, 2) + pow(v1.Z - v3.Z, 2));
+    float c = sqrt(pow(v3.X - v2.X, 2) + pow(v3.Y - v2.Y, 2) + pow(v3.Z - v2.Z, 2));
+
+    // aalf of the perimeter
+    float p = (a + b + c) / 2.0f;
+
+    // area
+    float A = sqrt(p * (p - a) * (p - b) * (p - c));
+
+    return A;
 }

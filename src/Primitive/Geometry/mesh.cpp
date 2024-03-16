@@ -16,7 +16,7 @@
 const float MAXFLOAT = std::numeric_limits<float>::max();
 
 bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
-
+    /*
     if (!f.bb.intersect(r)) return false;
 
     // Check whether the ray is parallel to the plan containing the triangle
@@ -72,7 +72,8 @@ bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
     }
     else {// This means that there is a line intersection but not a ray intersection.
         return false;
-    }
+    }*/
+    return false;
 }
 
 bool Mesh::intersect (Ray r, Intersection *isect) {
@@ -98,3 +99,17 @@ bool Mesh::intersect (Ray r, Intersection *isect) {
     
     return intersect;
 }
+
+int Mesh::get_index(Point p) {
+    int i = 0, ret = -1;
+
+    while(i < numVertices){
+        if (vertices[i].X == p.X && vertices[i].Y == p.Y && vertices[i].Z == p.Z){
+            ret = i;
+        }
+        i++;
+    }
+
+    return ret;
+}
+
