@@ -40,18 +40,18 @@ Perspective::Perspective(const Point Eye, const Point At, const Vector Up, const
 
 bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter) {
     //To screen space
-    float xs = (2.0 * (x + 0.5) / W) - 1.0;
-    float ys = ((2.0 * (H - y - 1.0) + 0.5) / H) - 1.0;
+    float xs = (2.0f * (x + 0.5f) / W) - 1.0f;
+    float ys = (2.0f * ((H - y - 1.0f) + 0.5f) / H) - 1.0f;
 
     //To camera space
-    float xc = xs * tan(fovW / 2.0);
-    float yc = ys * tan(fovH / 2.0);
+    float xc = xs * tan(fovW / 2.0f);
+    float yc = ys * tan(fovH / 2.0f);
 
     float auxDir[3];
     for (int i =0;i<3;i++){
         float auxX = c2w[i][0] * xc;
         float auxY = c2w[i][1] * yc;
-        float aux1 = c2w[i][2] * 1;
+        float aux1 = c2w[i][2] * 1.0f;
 
 		auxDir[i] = auxX + auxY + aux1;
     }

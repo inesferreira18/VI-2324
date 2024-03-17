@@ -51,15 +51,16 @@ int main(int argc, const char * argv[]) {
     scene.numLights++;
     
     // Image resolution
-    const int W= 640;
-    const int H= 480;
+    const int W= 1024;
+    const int H= 1024;
     
     img = new ImagePPM(W,H);
     
     // Camera parameters
-    const Point Eye ={0,0,0}, At={0,0,1};
+    const Point Eye = { 280,275,-330 };
+    const Point At={280,265,0};
     const Vector Up={0,1,0};
-    const float fovW = 60.f;
+    const float fovW = 90.f;
     const float fovH = fovW * (float)H/(float)W;  // in degrees
     const float fovWrad = fovW*3.14f/180.f, fovHrad = fovH*3.14f/180.f;    // to radians
     cam = new Perspective(Eye, At, Up, W, H, fovWrad, fovHrad);
@@ -79,7 +80,7 @@ int main(int argc, const char * argv[]) {
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
     // save the image
-    img->Save("MyImage.ppm");
+    img->Save("../src/MyImage.ppm");
     
     fprintf (stdout, "Rendering time = %.3lf secs\n\n", cpu_time_used);
     
