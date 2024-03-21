@@ -45,7 +45,7 @@ bool Triangle::intersect(Ray r, Intersection *isect) {
     q = s.cross(edge1);
     v = ff * r.dir.dot(q);
     if (v < 0.0 || u + v > 1.0) {
-        return false;
+        return false; 
     }
     // At this stage we can compute t to find out where the intersection point is on the line.
     float t = ff * edge2.dot(q);

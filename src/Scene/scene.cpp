@@ -67,7 +67,7 @@ bool Scene::Load (const std::string &fname) {
         return false;
     }
     
-    //PrintInfo (myObjReader);
+    PrintInfo (myObjReader);
 
     // convert loader's representation to my representation
     attrib_t attribs = myObjReader.GetAttrib();                                     // vertices, normals, texCoords
@@ -184,7 +184,7 @@ bool Scene::Load (const std::string &fname) {
 
 bool Scene::trace (Ray r, Intersection *isect) {
     Intersection curr_isect;
-    bool intersection = false;    
+    bool intersection = false;
     
     if (numPrimitives==0) return false;
     
@@ -202,7 +202,6 @@ bool Scene::trace (Ray r, Intersection *isect) {
             }
         }
     }
-
     return intersection;
 }
 

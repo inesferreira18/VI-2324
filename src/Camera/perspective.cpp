@@ -7,9 +7,12 @@
 
 #include "perspective.hpp"
 
+#include <iostream>
+
 Perspective::Perspective(const Point Eye, const Point At, const Vector Up, const int W, const int H, const float fovW, const float fovH) : Eye(Eye), At(At), Up(Up), W(W), H(H), fovW(fovW), fovH(fovH) {
     // -Forward Vector
     Vector F = Vector(At.X - Eye.X, At.Y - Eye.Y, At.Z - Eye.Z);
+
     F.normalize();
 
     // Right Vector
@@ -32,6 +35,7 @@ Perspective::Perspective(const Point Eye, const Point At, const Vector Up, const
                 aux = F;
             }
         }
+
         c2w[i][0] = aux.X;
         c2w[i][1] = aux.Y;
         c2w[i][2] = aux.Z;

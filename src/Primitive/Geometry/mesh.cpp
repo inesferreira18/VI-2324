@@ -6,7 +6,7 @@
 //
 
 #include "mesh.hpp"
-
+#include <iostream>
 // see pbrt book (3rd ed.), sec 3.6.2, pag 157
 //
 // Suggestion: use:
@@ -15,16 +15,22 @@
 
 const float MAXFLOAT = std::numeric_limits<float>::max();
 
+
 bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
-    /*
-    if (!f.bb.intersect(r)) return false;
+    
+    if (!f.bb.intersect(r)) {
+        //std::cout << "A" ;
+        return false;
+    }
 
     // Check whether the ray is parallel to the plan containing the triangle
-    // The dot ptoduct between the ray direction and the triangle normal will be 0
+    // The dot product between the ray direction and the triangle normal will be 0
     // also we require the ray to incide on the object on the same side
     // as the normal. i.e. dot(normal,r.dir) < EPSILON
-    const float par = normal.dot(r.dir);
-    if (par > (-EPSILON)) {
+    const float par = f.geoNormal.dot(r.dir);
+
+    if (par > (-EPSILON) && par < EPSILON) {
+		//std::cout << "B";
         return false;    // This ray is parallel to this triangle.
     }
 
@@ -33,23 +39,35 @@ bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
     // there are 3 unknowns (t,u,v)
     // and 3 equations (for XX, YY, ZZ)
 
+    Point f1, f2, f3;
+    f1 = vertices[f.vert_ndx[0]];
+    f2 = vertices[f.vert_ndx[1]];
+    f3 = vertices[f.vert_ndx[2]];
+
     Vector h, s, q;
-    Vector edge1 = Vector(vertices[vert_ndx[0]]);
+    Vector edge1 = f1.vec2point(f2);
+    Vector edge2 = f1.vec2point(f3);
+
     float a, ff, u, v;
 
     h = r.dir.cross(edge2);
     a = edge1.dot(h);
     ff = 1.0 / a;
-    s = vertices[vert_ndx[0]].vec2point(r.o);
+
+    s = f1.vec2point(r.o);
     u = ff * s.dot(h);
     if (u < 0.0 || u > 1.0) {
+		//std::cout << "C";
         return false;
     }
+    
     q = s.cross(edge1);
     v = ff * r.dir.dot(q);
     if (v < 0.0 || u + v > 1.0) {
+		//std::cout << "M";
         return false;
     }
+
     // At this stage we can compute t to find out where the intersection point is on the line.
     float t = ff * edge2.dot(q);
     if (t > EPSILON) // ray intersection
@@ -59,7 +77,7 @@ bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
         // Fill Intersection data from triangle hit : pag 165
         Vector wo = -1.f * r.dir;
         // make sure the normal points to the same side of the surface as wo
-        Vector for_normal = normal;
+        Vector for_normal = f.geoNormal;
         for_normal.Faceforward(wo);
         isect->p = pHit;
         isect->gn = for_normal;
@@ -72,8 +90,9 @@ bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
     }
     else {// This means that there is a line intersection but not a ray intersection.
         return false;
-    }*/
-    return false;
+		//std::cout << "E";
+
+    }
 }
 
 bool Mesh::intersect (Ray r, Intersection *isect) {
@@ -88,6 +107,7 @@ bool Mesh::intersect (Ray r, Intersection *isect) {
     intersect = false;
     for (auto face_it=faces.begin() ; face_it != faces.end() ; face_it++) {
         intersect_this_face = TriangleIntersect(r, *face_it, &curr_isect);
+        //std::cout << intersect_this_face;
         if (!intersect_this_face) continue;
         
         intersect = true;
