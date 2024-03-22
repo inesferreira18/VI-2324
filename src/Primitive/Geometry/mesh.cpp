@@ -48,6 +48,12 @@ bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
     Vector edge1 = f1.vec2point(f2);
     Vector edge2 = f1.vec2point(f3);
 
+    //std::cout << r.dir.X << r.dir.Y << r.dir.Z << "\n";
+    //r.dir.normalize();
+    //std::cout << r.dir.X << r.dir.Y << r.dir.Z << "\n";
+
+    //std::cout << "geoNormal: " << f.geoNormal.X << f.geoNormal.Y << f.geoNormal.Z << " normalfromedges: " << normal.X << normal.Y << normal.Z << "\n";
+
     float a, ff, u, v;
 
     h = r.dir.cross(edge2);
@@ -56,6 +62,7 @@ bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
 
     s = f1.vec2point(r.o);
     u = ff * s.dot(h);
+    //std::cout << r.o.X << r.o.Y << r.o.Z << "\n";
     if (u < 0.0 || u > 1.0) {
 		//std::cout << "C";
         return false;

@@ -60,6 +60,7 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
 		auxDir[i] = auxX + auxY + aux1;
     }
     Vector auxVector = Vector(auxDir[0], auxDir[1], auxDir[2]);
+    auxVector.normalize();
     r->dir.set(auxVector);
 
 	r->o.set(Eye.X, Eye.Y, Eye.Z);
