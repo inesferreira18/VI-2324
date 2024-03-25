@@ -23,10 +23,13 @@ class BRDF {
 public:
     BRDF () {}
     ~BRDF () {}
+
     // return the BRDF RGB value for a pair of (incident, scattering) directions : (wi,wo)
     virtual RGB f (Vector wi, Vector wo, const BRDF_TYPES = BRDF_ALL) {return RGB();}
+
     // return an outgoing direction wo and brdf RGB value for a given wi and probability pair prob[2]
     virtual RGB Sample_f (Vector wi, float *prob, Vector *wo, const BRDF_TYPES = BRDF_ALL) {return RGB();}
+
     // return the probability of sampling wo given wi
     virtual float pdf(Vector wi, Vector wo, const BRDF_TYPES = BRDF_ALL) {return 0.;}
 };

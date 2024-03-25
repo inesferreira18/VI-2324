@@ -19,11 +19,14 @@ void StandardRenderer::Render () {
         for (x=0 ; x< W ; x++) { // loop over columns
             Ray primary;
             Intersection isect;
-            bool intersected;
+            bool intersected,sucess_ray;
             RGB color;
           
             // Generate Ray (camera)
-			cam->GenerateRay(x,y,&primary,NULL);
+			sucess_ray = cam->GenerateRay(x,y,&primary,NULL);
+            if (!sucess_ray) {
+                std::cout << "Couldn't generate the ray: " << x << " " << y << "\n";
+            }
 
             // trace ray (scene)
             intersected = scene->trace(primary, &isect);

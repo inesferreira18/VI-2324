@@ -7,8 +7,6 @@
 
 #include "perspective.hpp"
 
-#include <iostream>
-
 Perspective::Perspective(const Point Eye, const Point At, const Vector Up, const int W, const int H, const float fovW, const float fovH) : Eye(Eye), At(At), Up(Up), W(W), H(H), fovW(fovW), fovH(fovH) {
     // -Forward Vector
     Vector F = Vector(At.X - Eye.X, At.Y - Eye.Y, At.Z - Eye.Z);
@@ -42,7 +40,7 @@ Perspective::Perspective(const Point Eye, const Point At, const Vector Up, const
     }
 }
 
-bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter) {
+bool Perspective::GenerateRay(const int x, const int y, Ray* r, const float* cam_jitter) {
     //To screen space
     float xs = (2.0f * (x + 0.5f) / W) - 1.0f;
     float ys = (2.0f * ((H - y - 1.0f) + 0.5f) / H) - 1.0f;
@@ -52,18 +50,18 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
     float yc = ys * tan(fovH / 2.0f);
 
     float auxDir[3];
-    for (int i =0;i<3;i++){
+    for (int i = 0; i < 3; i++) {
         float auxX = c2w[i][0] * xc;
         float auxY = c2w[i][1] * yc;
         float aux1 = c2w[i][2] * 1.0f;
 
-		auxDir[i] = auxX + auxY + aux1;
+        auxDir[i] = auxX + auxY + aux1;
     }
     Vector auxVector = Vector(auxDir[0], auxDir[1], auxDir[2]);
     auxVector.normalize();
     r->dir.set(auxVector);
 
-	r->o.set(Eye.X, Eye.Y, Eye.Z);
+    r->o.set(Eye.X, Eye.Y, Eye.Z);
 
     return true;
 }

@@ -26,15 +26,15 @@ void ImagePPM::ToneMap () {
 
 // Details and code on PPM files available at:
 // https://www.scratchapixel.com/lessons/digital-imaging/simple-image-manipulations/reading-writing-images.html
-bool ImagePPM::Save (std::string filename) {
-    
+bool ImagePPM::Save(std::string filename) {
+
     // convert from float to {0,1,..., 255}
     ToneMap();
 
     // write imageToSave to file
-    if (W == 0 || H== 0) { 
-        fprintf(stderr, "Can't save an empty image\n"); 
-        return false; 
+    if (W == 0 || H == 0) {
+        fprintf(stderr, "Can't save an empty image\n");
+        return false;
     }
 
     std::ofstream file;
@@ -43,8 +43,8 @@ bool ImagePPM::Save (std::string filename) {
 
     // Save Header 
     file << "P6\n"                     // P6 (stands for binary color image) 
-         << W << " " << H << "\n"      // Resolution  
-         << "255\n";                   // 255 (number of grey values between black and white)
+        << W << " " << H << "\n"      // Resolution  
+        << "255\n";                   // 255 (number of grey values between black and white)
 
     // Save Data
     unsigned char r, g, b;
@@ -57,6 +57,6 @@ bool ImagePPM::Save (std::string filename) {
     }
 
     file.close();
-    
+
     return true;
 }

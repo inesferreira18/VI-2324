@@ -50,8 +50,7 @@ static void PrintInfo (const ObjReader myObj) {
         std::cout << std::endl;
         
         printf("There are %lu material indexes\n", it_shape->mesh.material_ids.size());
-    }
-    
+    } 
 }
 
 /*
@@ -59,21 +58,21 @@ static void PrintInfo (const ObjReader myObj) {
  https://github.com/tinyobjloader/tinyobjloader
  */
 
-bool Scene::Load (const std::string &fname) {
+bool Scene::Load(const std::string& fname) {
     ObjReader myObjReader;
 
     if (!myObjReader.ParseFromFile(fname)) {
         if (!myObjReader.Error().empty()) { std::cerr << "TinyObjReader: " << myObjReader.Error(); }
         return false;
     }
-    
-    PrintInfo (myObjReader);
+
+    PrintInfo(myObjReader);
 
     // convert loader's representation to my representation
     attrib_t attribs = myObjReader.GetAttrib();                                     // vertices, normals, texCoords
     const std::vector<tinyobj::shape_t> shapes = myObjReader.GetShapes();           // primitives
     const std::vector<tinyobj::material_t> materials = myObjReader.GetMaterials();  // materials
-    
+
     // Load Materials
     for (auto it_mat = materials.begin(); it_mat != materials.end(); it_mat++) {
         Phong* p = new Phong();
@@ -107,7 +106,7 @@ bool Scene::Load (const std::string &fname) {
         mesh->bb.min.set(0.0, 0.0, 0.0);
         mesh->bb.max.set(0.0, 0.0, 0.0);
 
-             
+
         // add faces and vertices
         for (auto v_it = it_shape->mesh.indices.begin(); v_it != it_shape->mesh.indices.end(); ) {
             Face* face = new Face;
@@ -123,7 +122,7 @@ bool Scene::Load (const std::string &fname) {
                 Point actual_vert = Point(vx, vy, vz);
 
                 // add it to the vector of vertices
-                myVtcs[v].set(actual_vert.X,actual_vert.Y,actual_vert.Z);
+                myVtcs[v].set(actual_vert.X, actual_vert.Y, actual_vert.Z);
 
                 if (v == 0) {
                     face->bb.min.set(myVtcs[0].X, myVtcs[0].Y, myVtcs[0].Z);
@@ -139,7 +138,7 @@ bool Scene::Load (const std::string &fname) {
                 if (actual_vert_index == -1) {
 
                     // add the vertex to the mesh
-                    mesh->vertices.push_back(actual_vert); 
+                    mesh->vertices.push_back(actual_vert);
                     mesh->numVertices++;
 
                     // update de bb
@@ -152,30 +151,30 @@ bool Scene::Load (const std::string &fname) {
                 face->vert_ndx[v] = actual_vert_index;
 
                 // next vertice within this face (there are 3)
-                v_it++; 
+                v_it++;
             }
 
 
             // add face to mesh: compute the geometric normal
             Vector edge1 = myVtcs[0].vec2point(myVtcs[1]);
             Vector edge2 = myVtcs[0].vec2point(myVtcs[2]);
-            
+
             //f->edge1 = edge1;                                     
             //f->edge2 = edge2;
-            
+
             Vector geoNormal = edge1.cross(edge2);
             geoNormal.normalize();
             face->geoNormal.set(geoNormal);
 
             //f->FaceID = FaceID++;                              
-            
+
             // add face to mesh
-            mesh->faces.push_back(*face); 
+            mesh->faces.push_back(*face);
             mesh->numFaces++;
         }
 
         // add primitive to scene
-        prims.push_back(prim); 
+        prims.push_back(prim);
         numPrimitives++;
     }
 

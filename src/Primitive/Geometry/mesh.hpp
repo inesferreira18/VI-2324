@@ -29,10 +29,13 @@ private:
 public:
     int numFaces;
     std::vector<Face> faces;
+
     int numVertices;
     std::vector<Point> vertices;
+
     int numNormals;
     std::vector<Vector> normals;
+
     bool intersect (Ray r, Intersection *isect);
 
     int get_index(Point p);

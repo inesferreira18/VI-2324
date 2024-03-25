@@ -16,13 +16,13 @@ public:
     //minimum and maximum points of the box;
     Point min, max;
 
-    void update (Point p) {
+    void update(Point p) {
         if (p.X < min.X) min.X = p.X;
         else if (p.X > max.X) max.X = p.X;
-        
+
         if (p.Y < min.Y) min.Y = p.Y;
         else if (p.Y > max.Y) max.Y = p.Y;
-        
+
         if (p.Z < min.Z) min.Z = p.Z;
         else if (p.Z > max.Z) max.Z = p.Z;
     }
@@ -65,10 +65,10 @@ public:
             tzFar = aux;
         }
 
-        
+
         float tBoxMin = fmax(fmax(txNear, tyNear), tzNear);
         float tBoxMax = fmin(fmin(txFar, tyFar), tzFar);
-        
+
 
         return tBoxMin <= tBoxMax;
     }

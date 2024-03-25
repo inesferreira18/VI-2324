@@ -34,7 +34,7 @@ public:
         imagePlane[y*W+x] += rgb;
         return true;
     }
-    bool Save (std::string filename) {return true;}
+    virtual bool Save (std::string filename) {return true;}
 };
 
 #endif /* image_hpp */
