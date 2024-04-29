@@ -16,6 +16,7 @@
 #include <iostream>
 #include <set>
 #include <vector>
+#include "../Light/AreaLight.hpp"
 
 using namespace tinyobj;
 
@@ -201,6 +202,29 @@ bool Scene::trace (Ray r, Intersection *isect) {
             }
         }
     }
+
+    isect->isLight = false;
+    // now iterate over light sources and intersect with those that havegeometry
+    for (auto l = lights.begin(); l != lights.end(); l++) {
+        if ((*l)->type == AREA_LIGHT) {
+            AreaLight* al = (AreaLight*)*l;
+
+            if (al->gem->intersect(r, &curr_isect)) {
+                if (!intersection) { // first intersection
+                    intersection = true;
+                    *isect = curr_isect;
+                    isect->isLight = true;
+                    isect->Le = al->L();
+                }
+                else if (curr_isect.depth < isect->depth) {
+                    *isect = curr_isect;
+                    isect->isLight = true;
+                    isect->Le = al->L();
+                }
+            }
+        }
+    }
+
     return intersection;
 }
 

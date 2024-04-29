@@ -33,7 +33,7 @@ int main(int argc, const char * argv[]) {
     double cpu_time_used;
 
     fs::path currentPath = fs::current_path();
-    fs::path path = currentPath /".." / "src" / "Scene" / "tinyobjloader" / "models" / "cornell_box.obj";
+    fs::path path = currentPath /".." / "src" / "Scene" / "tinyobjloader" / "models" / "cornell_box_VI.obj";
     std::string pathStr = path.string();
     success = scene.Load(pathStr);
 
@@ -46,10 +46,47 @@ int main(int argc, const char * argv[]) {
     std::cout << std::endl;
     
     // add an ambient light to the scene
-    AmbientLight ambient(RGB(0.9,0.9,0.9));
+    AmbientLight ambient(RGB(0.05,0.05,0.05));
     scene.lights.push_back(&ambient);
     scene.numLights++;
     
+    // add a point light to the scene
+    /*PointLight point(RGB(0.9, 0.9, 0.9), Point(288,508,282));
+    scene.lights.push_back(&point);
+    scene.numLights++;
+    
+	PointLight point1(RGB(0.4, 0.4, 0.4), Point(288-50, 508, 282-50));
+	scene.lights.push_back(&point1);
+	scene.numLights++;
+
+	PointLight point2(RGB(0.4, 0.4, 0.4), Point(288 + 50, 508, 282 - 50));
+	scene.lights.push_back(&point2);
+	scene.numLights++;
+
+	PointLight point3(RGB(0.4, 0.4, 0.4), Point(288 - 50, 508, 282 + 50));
+	scene.lights.push_back(&point3);
+	scene.numLights++;
+
+	PointLight point4(RGB(0.4, 0.4, 0.4), Point(288 + 50, 508, 282 + 50));
+	scene.lights.push_back(&point4);
+	scene.numLights++;*/
+
+    // add an area light to the scene (548 is the ceiling)
+    Point v1 = {343, 548, 227};
+    Point v2 = {343, 548, 332};
+    Point v3 = {213, 548, 332};
+    Point v4 = {213, 548, 227};
+    Vector n = {0, -1, 0};
+    RGB power = {1.0, 1.0, 1.0};
+
+    AreaLight* al1 = new AreaLight(power, v1, v2, v3, n);
+    scene.lights.push_back(al1);
+    scene.numLights++;
+
+    AreaLight* al2 = new AreaLight(power, v1, v3, v4, n);
+    scene.lights.push_back(al2);
+    scene.numLights++;
+
     // Image resolution
     const int W= 1024;
     const int H= 1024;
@@ -67,10 +104,12 @@ int main(int argc, const char * argv[]) {
     
     // create the shader
     RGB background(0.05, 0.05, 0.55);
-    shd = new AmbientShader(&scene, background);
+    //shd = new WhittedShader(&scene, background);
+    shd = new DistributedShader(&scene, background);
 
     // declare the renderer
-    int spp=1;     // samples per pixel
+    // samples per pixel
+    int spp=16;     
     StandardRenderer myRender (cam, &scene, img, shd, spp);
 
     // render

@@ -27,6 +27,7 @@ RGB DistributedShader::directLighting (Intersection isect, Phong *f) {
                 this_l_color = Ka * l->L();
             }
         }
+
         if (l->type == POINT_LIGHT) {  // is it a point light ?
             if (!f->Kd.isZero()) {
                 RGB L, Kd = f->Kd;
@@ -64,13 +65,47 @@ RGB DistributedShader::directLighting (Intersection isect, Phong *f) {
                 } // end cosL > 0.
             }
         }
+
         if (l->type == AREA_LIGHT) {  // is it an area light ?
             
-            // ...
-            
-        }  // end area light
+            if (!f->Kd.isZero()) {
+                RGB L, Kd = f->Kd;
+                Point lpoint;
+                float l_pdf;
+                AreaLight* al = (AreaLight*)l;
+
+                float rnd[2];
+                rnd[0] = ((float)rand()) / ((float)RAND_MAX);
+                rnd[1] = ((float)rand()) / ((float)RAND_MAX);
+                L = al->Sample_L(rnd, &lpoint, l_pdf);
+
+                // compute the direction from the intersection point to the light source
+                Vector Ldir = isect.p.vec2point(lpoint);
+                const float Ldistance = Ldir.norm();
+                Ldir.normalize();
+
+                // cosine between Ldir and the shading normal at the intersection point
+                float cosL = Ldir.dot(isect.sn);
+
+                // cosine between Ldir and the area light source normal
+                float cosL_LA = Ldir.dot(al->gem->normal);
+
+                // shade
+                if (cosL > 0. && cosL_LA <= 0.) { // light NOT behind primitive AND light normal points to the ray o
+                    // generate the shadow ray
+                    Ray shadow(isect.p, Ldir);
+
+                    shadow.adjustOrigin(isect.gn);
+                    
+                    // light source not occluded
+                    if (scene->visibility(shadow, Ldistance - EPSILON)) { 
+                        color += (Kd * L * cosL) / l_pdf;
+                    }
+                } // end cosL > 0.
+            }
+        } // end area light
         
-        color += this_l_color;
+        //color += this_l_color;
 
     } // for loop
     return color;
