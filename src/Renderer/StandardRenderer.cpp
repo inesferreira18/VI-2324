@@ -29,7 +29,7 @@ void StandardRenderer::Render () {
             for (int ss = 0; ss < spp; ss++) {
                 if (jitter) {
                     float jitterV[2];
-                    jitterV[0] = ((float)rand()) / ((float)RAND_MAX);
+                    jitterV[0] = ((float)rand()) / ((float)RAND_MAX);               // PESQUISAR GERADORES DE NUMEROS ALEATORIOS MELHORES PARA PARALELIZAR
                     jitterV[1] = ((float)rand()) / ((float)RAND_MAX);
                     
                     // Generate Ray (camera)

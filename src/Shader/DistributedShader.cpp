@@ -94,9 +94,12 @@ RGB DistributedShader::directLighting (Intersection isect, Phong *f) {
                 if (cosL > 0. && cosL_LA <= 0.) { // light NOT behind primitive AND light normal points to the ray o
                     // generate the shadow ray
                     Ray shadow(isect.p, Ldir);
+                    shadow.pix_x = isect.pix_x;
+                    shadow.pix_y = isect.pix_y;
+                    shadow.FaceID = isect.FaceID;
 
                     shadow.adjustOrigin(isect.gn);
-                    
+   
                     // light source not occluded
                     if (scene->visibility(shadow, Ldistance - EPSILON)) { 
                         color += (Kd * L * cosL) / l_pdf;

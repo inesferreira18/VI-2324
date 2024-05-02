@@ -7,6 +7,7 @@
 
 #include "PathTracerShader.hpp"
 #include <stdlib.h>
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 //#include "DEB.h"
@@ -138,6 +139,7 @@ RGB PathTracerShader::specularReflection (Intersection isect, Phong *f, int dept
     
     // generate the specular ray
     
+    
     // IDEAL SPECULAR REFLECTION
     // direction R = 2 (N.V) N - V
     float cos = isect.gn.dot(isect.wo);
@@ -209,6 +211,7 @@ RGB PathTracerShader::specularReflection (Intersection isect, Phong *f, int dept
 RGB PathTracerShader::diffuseReflection (Intersection isect, Phong *f, int depth) {
     RGB color(0.,0.,0.);
     Vector dir;
+    float pdf;
     
     // generate the specular ray
     
@@ -218,9 +221,12 @@ RGB PathTracerShader::diffuseReflection (Intersection isect, Phong *f, int depth
     rnd[0] = ((float)rand()) / ((float)RAND_MAX);
     rnd[1] = ((float)rand()) / ((float)RAND_MAX);
         
-    Vector D_around_Z;
     // cosine sampling
-    // ...
+    Vector D_around_Z;
+    float cos_theta= D_around_Z.Z = sqrtf(rnd[1]); // cos sampling
+    D_around_Z.Y = sinf(2.*M_PI*rnd[0])*sqrtf(1.-rnd[1]);
+    D_around_Z.X = cosf(2.*M_PI*rnd[0])*sqrtf(1.-rnd[1]);
+    pdf = cos_theta / ( M_PI );
         
     // generate a coordinate system from N
     Vector Rx, Ry;
@@ -245,7 +251,8 @@ RGB PathTracerShader::diffuseReflection (Intersection isect, Phong *f, int depth
 
     if (!d_isect.isLight) {  // if light source return 0 ; handled by direct
         // shade this intersection
-        // ...
+        RGB Rcolor = shade (intersected, d_isect, depth+1);
+        color = (f->Kd * cos_theta * Rcolor) / pdf ;
     }
     return color;
 
@@ -268,12 +275,15 @@ RGB PathTracerShader::shade(bool intersected, Intersection isect, int depth) {
     Phong *f = (Phong *)isect.f;
     
     if (depth <MAX_DEPTH) {
-        if (!f->Kd.isZero()) {
-            color += specularReflection (isect, f, depth) ;
-        }
-        if (!f->Kd.isZero()) {
-            color += diffuseReflection (isect, f, depth) ;
-        }
+        RGB lcolor;
+        // random select between specular and diffuse
+        float s_p = f->Ks.Y() /(f->Ks.Y()+f->Kd.Y());
+        float rnd = ((float)rand()) / ((float)RAND_MAX);
+        if (rnd <= s_p || s_p >= (1.-EPSILON)) // do specular
+            lcolor = specularReflection (isect, f, depth) / s_p;
+        else // do diffuse
+            lcolor = diffuseReflection (isect, f, depth) / (1.-s_p);
+        color += lcolor;
     }
 
     // if there is a diffuse component do direct light
