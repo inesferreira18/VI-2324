@@ -42,8 +42,7 @@ int main(int argc, const char * argv[]) {
         return 1;
     }
     std::cout << "Scene Load: SUCCESS!! :-)\n";
-    scene.printSummary();
-    std::cout << std::endl;
+    
     
     // add an ambient light to the scene
     AmbientLight ambient(RGB(0.05,0.05,0.05));
@@ -88,8 +87,8 @@ int main(int argc, const char * argv[]) {
     scene.numLights++;
 
     // Image resolution
-    const int W= 1024;
-    const int H= 1024;
+    const int W= 720;
+    const int H= 720;
     
     img = new ImagePPM(W,H);
     
@@ -106,7 +105,7 @@ int main(int argc, const char * argv[]) {
     RGB background(0.05, 0.05, 0.55);
     //shd = new WhittedShader(&scene, background);
     //shd = new DistributedShader(&scene, background);
-    shd = new PathTracerShader(&scene, background);
+    //shd = new PathTracerShader(&scene, background);
 
     // declare the renderer
     // samples per pixel
@@ -120,10 +119,14 @@ int main(int argc, const char * argv[]) {
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
     // save the image
-    img->Save("../src/MyImage.ppm");
+    img->Save("../src/MyImage_ACES_64spp.ppm");
     
     fprintf (stdout, "Rendering time = %.3lf secs\n\n", cpu_time_used);
     
+    scene.printSummary();
+    std::cout << std::endl;
+
     std::cout << "That's all, folks!" << std::endl;
     return 0;
 }
+

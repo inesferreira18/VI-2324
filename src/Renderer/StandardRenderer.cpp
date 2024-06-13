@@ -6,6 +6,14 @@
 //
 
 #include "StandardRenderer.hpp"
+#include <omp.h>
+#include <random>
+
+float floatRand(const float& min, const float& max) {
+    static thread_local std::mt19937 generator;
+    std::uniform_real_distribution<float> distribution(min, max);
+    return distribution(generator);
+}
 
 void StandardRenderer::Render () {
     int W=0,H=0;  // resolution
@@ -17,7 +25,18 @@ void StandardRenderer::Render () {
     // jitter
     const bool jitter = false;
 
+    // define number of threads
+    int max_threads = omp_get_max_threads();
+    std::cout << "\nNumber of available threads: " << max_threads << std::endl;
+
+    // shouldn't use every thread. using 70% of the available threads instead
+    int threads = static_cast<int>(max_threads * 0.7);
+    std::cout << "Running with [" << threads << "] threads...\n" << std::endl;
+    omp_set_num_threads(threads);
+
     // main rendering loop: get primary rays from the camera until done
+    //#pragma omp parallel reduction(+ : color)
+    #pragma omp parallel for private(x)schedule(dynamic)
     for (y=0 ; y< H ; y++) {  // loop over rows
         for (x=0 ; x< W ; x++) { // loop over columns
             Ray primary;
@@ -29,8 +48,12 @@ void StandardRenderer::Render () {
             for (int ss = 0; ss < spp; ss++) {
                 if (jitter) {
                     float jitterV[2];
-                    jitterV[0] = ((float)rand()) / ((float)RAND_MAX);               // PESQUISAR GERADORES DE NUMEROS ALEATORIOS MELHORES PARA PARALELIZAR
-                    jitterV[1] = ((float)rand()) / ((float)RAND_MAX);
+
+                    jitterV[0] = floatRand(0.0f,1.0f);  
+                    jitterV[1] = floatRand(0.0f,1.0f);
+
+                    std::cout << jitterV[0] << " " << jitterV[1] << "\n" << std::endl;
+
                     
                     // Generate Ray (camera)
                     sucess_ray = cam->GenerateRay(x, y, &primary, jitterV);

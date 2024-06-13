@@ -136,6 +136,9 @@ RGB PathTracerShader::directLighting (Intersection isect, Phong *f){
 RGB PathTracerShader::specularReflection (Intersection isect, Phong *f, int depth) {
     RGB color(0.,0.,0.);
     Vector Rdir, s_dir;
+    float pdf;
+    Intersection s_isect;
+
     
     // generate the specular ray
     
