@@ -9,8 +9,16 @@
 #include <stdlib.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <random>
+#include <__msvc_chrono.hpp>
 
 //#include "DEB.h"
+float floatRand() {
+    static thread_local std::mt19937 generator;
+    std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+    return distribution(generator);
+}
+
 
 RGB PathTracerShader::directLighting (Intersection isect, Phong *f){
     
@@ -84,9 +92,7 @@ RGB PathTracerShader::directLighting (Intersection isect, Phong *f){
                 
                 // get the position and radiance of the light source
                 // get 2 random number in [0,1[
-                float rnd[2];
-                rnd[0] = ((float)rand()) / ((float)RAND_MAX);
-                rnd[1] = ((float)rand()) / ((float)RAND_MAX);
+                float rnd[2] = { floatRand(), floatRand()};
                 L = al->Sample_L(rnd, &lpoint, l_pdf);
                 
                 // compute the direction from the intersection point to the light source
@@ -154,15 +160,13 @@ RGB PathTracerShader::specularReflection (Intersection isect, Phong *f, int dept
         // generate the cosine lobel sampled direction around (0,0,1)
         // following item (36) of the Global illumination compendium
         // get 2 random number in [0,1[
-        float rnd[2];
-        rnd[0] = ((float)rand()) / ((float)RAND_MAX);
-        rnd[1] = ((float)rand()) / ((float)RAND_MAX);
-        
+        float rnd[2] = { floatRand(), floatRand() };
+
         Vector S_around_N;
         //  generate s_dir
         // ...
         
-        Ray specular(isect.p, s_dir);
+        Ray specular(isect.p, Rdir);
         
         specular.pix_x = isect.pix_x;
         specular.pix_y = isect.pix_y;
@@ -220,10 +224,8 @@ RGB PathTracerShader::diffuseReflection (Intersection isect, Phong *f, int depth
     
     // actual direction distributed around N
     // get 2 random number in [0,1[
-    float rnd[2];
-    rnd[0] = ((float)rand()) / ((float)RAND_MAX);
-    rnd[1] = ((float)rand()) / ((float)RAND_MAX);
-        
+    float rnd[2] = { floatRand(), floatRand() };
+
     // cosine sampling
     Vector D_around_Z;
     float cos_theta= D_around_Z.Z = sqrtf(rnd[1]); // cos sampling
@@ -276,12 +278,12 @@ RGB PathTracerShader::shade(bool intersected, Intersection isect, int depth) {
     
     // get the BRDF
     Phong *f = (Phong *)isect.f;
-    
+
     if (depth <MAX_DEPTH) {
         RGB lcolor;
         // random select between specular and diffuse
         float s_p = f->Ks.Y() /(f->Ks.Y()+f->Kd.Y());
-        float rnd = ((float)rand()) / ((float)RAND_MAX);
+        float rnd = floatRand();
         if (rnd <= s_p || s_p >= (1.-EPSILON)) // do specular
             lcolor = specularReflection (isect, f, depth) / s_p;
         else // do diffuse

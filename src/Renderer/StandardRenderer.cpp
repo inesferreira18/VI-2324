@@ -29,14 +29,13 @@ void StandardRenderer::Render () {
     int max_threads = omp_get_max_threads();
     std::cout << "\nNumber of available threads: " << max_threads << std::endl;
 
-    // shouldn't use every thread. using 70% of the available threads instead
+    // using 70% of the available threads
     int threads = static_cast<int>(max_threads * 0.7);
     std::cout << "Running with [" << threads << "] threads...\n" << std::endl;
     omp_set_num_threads(threads);
 
     // main rendering loop: get primary rays from the camera until done
     //#pragma omp parallel reduction(+ : color)
-    #pragma omp parallel for private(x)schedule(dynamic)
     for (y=0 ; y< H ; y++) {  // loop over rows
         for (x=0 ; x< W ; x++) { // loop over columns
             Ray primary;

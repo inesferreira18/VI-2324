@@ -105,7 +105,7 @@ int main(int argc, const char * argv[]) {
     RGB background(0.05, 0.05, 0.55);
     //shd = new WhittedShader(&scene, background);
     //shd = new DistributedShader(&scene, background);
-    //shd = new PathTracerShader(&scene, background);
+    shd = new PathTracerShader(&scene, background);
 
     // declare the renderer
     // samples per pixel
@@ -119,7 +119,7 @@ int main(int argc, const char * argv[]) {
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
     // save the image
-    img->Save("../src/MyImage_ACES_64spp.ppm");
+    img->Save("../src/MyImage_test3.ppm");
     
     fprintf (stdout, "Rendering time = %.3lf secs\n\n", cpu_time_used);
     
