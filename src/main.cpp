@@ -119,7 +119,7 @@ int main(int argc, const char * argv[]) {
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
     // save the image
-    img->Save("../src/MyImage_test3.ppm");
+    img->Save("../src/MyImage_Rein.ppm");
     
     fprintf (stdout, "Rendering time = %.3lf secs\n\n", cpu_time_used);
     

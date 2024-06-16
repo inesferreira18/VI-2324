@@ -6,9 +6,23 @@ project(VI-RT)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 
-if  (WIN32)
 
-else(WIN32) #Linux and Mac
+# Check for OpenMP
+find_package(OpenMP)
+
+if(OPENMP_FOUND)
+    message(STATUS "OpenMP found")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    #target_compile_options(main PUBLIC ${OpenMP_CXX_FLAGS})
+else()
+    message(WARNING "OpenMP not found")
+endif()
+
+
+if  (WIN32)
+    # Windows specific configurations if needed
+else(WIN32) 
+    #Linux and Mac
     find_package(OpenGL REQUIRED)
     find_package(GLUT REQUIRED)
     find_package(GLEW REQUIRED)
@@ -84,7 +98,6 @@ add_library(
 
 add_library(LibUtils INTERFACE)
 target_include_directories(LibUtils INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/utils)
-
 
 # Link libraries
 target_link_libraries(main LibCamera) 

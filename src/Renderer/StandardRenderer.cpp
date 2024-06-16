@@ -6,6 +6,7 @@
 //
 
 #include "StandardRenderer.hpp"
+#include "../Camera/perspective.hpp"
 #include <omp.h>
 #include <random>
 
@@ -20,8 +21,9 @@ void StandardRenderer::Render () {
     int x,y;
 
     // get resolution from the camera
-    cam->getResolution(&W,&H);
-    
+    Perspective* perspCam = dynamic_cast<Perspective*>(cam);
+    perspCam->getResolution(&W, &H);
+
     // jitter
     const bool jitter = false;
 
@@ -35,50 +37,50 @@ void StandardRenderer::Render () {
     omp_set_num_threads(threads);
 
     // main rendering loop: get primary rays from the camera until done
-    //#pragma omp parallel reduction(+ : color)
-    for (y=0 ; y< H ; y++) {  // loop over rows
-        for (x=0 ; x< W ; x++) { // loop over columns
-            Ray primary;
-            Intersection isect;
-            bool intersected,sucess_ray;
-            RGB color;
+    float sumR = 0.0f, sumG = 0.0f, sumB = 0.0f;
+    #pragma omp parallel default(none) shared(perspCam, W, H, sumR, sumG, sumB)
+    {
+        #pragma omp for reduction(+: sumR,sumG,sumB)
+        for (int y = 0; y < H; y++) {     // loop over rows
+            for (int x = 0; x < W; x++) { // loop over columns
+                sumR = 0.0f;
+                sumG = 0.0f;
+                sumB = 0.0f;
 
-            // multiple samples per pixel
-            for (int ss = 0; ss < spp; ss++) {
-                if (jitter) {
+                // multiple samples per pixel
+                for (int ss = 0; ss < spp; ss++) {
+                    Ray primary;
+                    Intersection isect;
+
                     float jitterV[2];
+                    if (jitter) {
+                        jitterV[0] = floatRand(0.0f,1.0f);  
+                        jitterV[1] = floatRand(0.0f,1.0f);
+                    }
 
-                    jitterV[0] = floatRand(0.0f,1.0f);  
-                    jitterV[1] = floatRand(0.0f,1.0f);
-
-                    std::cout << jitterV[0] << " " << jitterV[1] << "\n" << std::endl;
-
+                    // Generate Ray (camera)
+                    perspCam->GenerateRay(x, y, &primary, jitterV);
                     
-                    // Generate Ray (camera)
-                    sucess_ray = cam->GenerateRay(x, y, &primary, jitterV);
+                    // trace ray (scene)
+                    bool intersected = scene->trace(primary, &isect);
+
+                    // shade this intersection (shader) - remember: depth=0
+                    RGB this_color = shd->shade(intersected, isect, 0);
+
+                    sumR += this_color.R;
+                    sumG += this_color.G;
+                    sumB += this_color.B;
                 }
-                else {
-                    // Generate Ray (camera)
-                    sucess_ray = cam->GenerateRay(x, y, &primary);
-                }
 
-                if (!sucess_ray) {
-                    std::cout << "Couldn't generate the ray: " << x << " " << y << "\n";
-                }
+                // Average
+                sumR = sumR / spp;
+                sumG = sumG / spp;
+                sumB = sumB / spp;
 
-                // trace ray (scene)
-                intersected = scene->trace(primary, &isect);       
-
-                // shade this intersection (shader) - remember: depth=0
-                RGB this_color = shd->shade(intersected, isect,0);
-
-                color += this_color;
-            }                     
-
-            color = color / spp;
-
-            // write the result into the image frame buffer (image)
-            img->set(x,y,color);
+                // write the result into the image frame buffer (image)
+                RGB color = { sumR,sumG,sumB};
+                img->set(x, y, color);
+            }
         }
     }
 }
