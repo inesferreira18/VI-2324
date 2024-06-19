@@ -86,7 +86,7 @@ void StandardRenderer::Render (SDL_Renderer* renderer, bool LAUNCH_WINDOW) {
 
     // main rendering loop: get primary rays from the camera until done
     float sumR = 0.0f, sumG = 0.0f, sumB = 0.0f;
-    #pragma omp parallel for default(none) reduction(+: sumR,sumG,sumB)
+    #pragma omp parallel for default(none) schedule(dynamic) reduction(+: sumR,sumG,sumB)
         for (int y = 0; y < H; y++) {     // loop over rows
             for (int x = 0; x < W; x++) { // loop over columns
                 sumR = 0.0f;

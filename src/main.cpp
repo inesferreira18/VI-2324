@@ -94,8 +94,8 @@ int main(int argc, char * argv[]) {
     scene.numLights++;
 
     // Image resolution
-    const int W= 720;
-    const int H= 720;
+    const int W= 1024;
+    const int H= 1024;
     
     img = new ImagePPM(W,H);
     
