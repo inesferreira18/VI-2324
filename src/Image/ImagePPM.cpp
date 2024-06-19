@@ -100,8 +100,8 @@ void ImagePPM::ToneMap_ACES() {
 bool ImagePPM::Save(std::string filename) {
 
     // convert from float to {0,1,..., 255}
-    //ToneMap();
-    ToneMap_Reinhard();
+    ToneMap();
+    //ToneMap_Reinhard();
     //ToneMap_ACES();
 
     // write imageToSave to file
@@ -133,3 +133,4 @@ bool ImagePPM::Save(std::string filename) {
 
     return true;
 }
+

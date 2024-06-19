@@ -16,7 +16,55 @@ float floatRand(const float& min, const float& max) {
     return distribution(generator);
 }
 
-void StandardRenderer::Render () {
+bool StandardRenderer::start_window(SDL_Window** window, SDL_Renderer** renderer, int W, int H) {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        std::cerr << "SDL could not initialize! SDL Error: " << SDL_GetError() << "\n";
+        return false;
+    }
+
+    *window = SDL_CreateWindow("VI Grupo 9 - Window Output", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, W, H, SDL_WINDOW_SHOWN);
+    if (*window == nullptr) {
+        std::cerr << "Window could not be created! SDL Error: " << SDL_GetError() << "\n";
+        return false;
+    }
+
+    *renderer = SDL_CreateRenderer(*window, -1, SDL_RENDERER_ACCELERATED);
+    if (*renderer == nullptr) {
+        std::cerr << "Renderer could not be created! SDL Error: " << SDL_GetError() << "\n";
+        SDL_DestroyWindow(*window);
+        *window = nullptr;
+        return false;
+    }
+
+    SDL_SetRenderDrawColor(*renderer, 0xFF, 0xFF, 0xFF, 0xFF);  // White background
+    SDL_RenderClear(*renderer);
+
+    return true;
+}
+
+void StandardRenderer::close_window(SDL_Window* window, SDL_Renderer* renderer) {
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    window = nullptr;
+    renderer = nullptr;
+
+    SDL_Quit();
+}
+
+void StandardRenderer::updatePixel(SDL_Renderer* renderer, int x, int y, unsigned char R, unsigned char G, unsigned char B) {
+    SDL_SetRenderDrawColor(renderer, R, G, B, 255);
+    SDL_RenderDrawPoint(renderer, x, y);
+    SDL_RenderPresent(renderer);
+}
+
+void StandardRenderer::updatePixel(SDL_Renderer* renderer, int x, int y, RGB color) {
+    SDL_SetRenderDrawColor(renderer, (std::min(1.f, color.R) * 255), (std::min(1.f, color.G) * 255), (std::min(1.f, color.B) * 255), 255);
+    SDL_RenderDrawPoint(renderer, x, y);
+}
+
+
+
+void StandardRenderer::Render (SDL_Renderer* renderer, bool LAUNCH_WINDOW) {
     int W=0,H=0;  // resolution
     int x,y;
 
@@ -80,6 +128,13 @@ void StandardRenderer::Render () {
                 // write the result into the image frame buffer (image)
                 RGB color = { sumR,sumG,sumB};
                 img->set(x, y, color);
+
+                if (LAUNCH_WINDOW) {
+                    #pragma omp critical {
+                    updatePixel(renderer, x, y, color);
+                    }
+                    SDL_RenderPresent(renderer);
+                }
             }
         }
     }

@@ -5,6 +5,10 @@
 //  Created by Luis Paulo Santos on 30/01/2023.
 //
 
+#define SDL_MAIN_HANDLED
+
+#include "SDL.h"
+
 #include <iostream>
 #include "Scene/scene.hpp"
 #include "Camera/perspective.hpp"
@@ -23,7 +27,8 @@
 
 namespace fs = std::filesystem;
 
-int main(int argc, const char * argv[]) {
+
+int main(int argc, char * argv[]) {
     Scene scene;
     Perspective *cam; // Camera
     ImagePPM *img;    // Image
@@ -31,6 +36,8 @@ int main(int argc, const char * argv[]) {
     bool success;
     clock_t start, end;
     double cpu_time_used;
+
+    bool LAUNCH_WINDOW = true;
 
     fs::path currentPath = fs::current_path();
     fs::path path = currentPath /".." / "src" / "Scene" / "tinyobjloader" / "models" / "cornell_box_VI.obj";
@@ -109,12 +116,21 @@ int main(int argc, const char * argv[]) {
 
     // declare the renderer
     // samples per pixel
-    int spp=64;     
+    int spp=2048;     
     StandardRenderer myRender (cam, &scene, img, shd, spp);
+
+    SDL_Window* window;
+    SDL_Renderer* renderer = nullptr;
+
+    if(LAUNCH_WINDOW)
+        if (!myRender.start_window(&window, &renderer, W, H)) {
+            std::cerr << "Failed to start window!\n";
+            return -1;
+        }
 
     // render
     start = clock();
-    myRender.Render();
+    myRender.Render(renderer, LAUNCH_WINDOW);
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
@@ -125,6 +141,20 @@ int main(int argc, const char * argv[]) {
     
     scene.printSummary();
     std::cout << std::endl;
+
+    if (LAUNCH_WINDOW) {
+        std::cout << "Updating window...\n";
+        for (int i = 0; i < H; i++) {
+            for (int j = 0; j < W; ++j) {
+                myRender.updatePixel(renderer, j, i, img->getImage()[i * W + j].val[0], img->getImage()[i * W + j].val[1], img->getImage()[i * W + j].val[2]);
+                SDL_RenderPresent(renderer);
+            }
+        }
+    }
+
+
+    std::cout << "Press Enter to continue...";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cout << "That's all, folks!" << std::endl;
     return 0;

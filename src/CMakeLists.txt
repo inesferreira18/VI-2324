@@ -28,8 +28,20 @@ else(WIN32)
     find_package(GLEW REQUIRED)
 endif(WIN32)
 
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
+
 # Add main executable
 add_executable(main main.cpp)
+target_link_libraries(main ${SDL2_LIBRARIES})
+
+if (WIN32)
+    add_custom_command(
+        TARGET main POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:SDL2::SDL2>" "$<TARGET_FILE_DIR:main>"
+        VERBATIM
+    )
+endif()
 
 # Add subdirectories
 add_library(
