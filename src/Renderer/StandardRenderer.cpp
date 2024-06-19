@@ -60,6 +60,7 @@ void StandardRenderer::updatePixel(SDL_Renderer* renderer, int x, int y, unsigne
 void StandardRenderer::updatePixel(SDL_Renderer* renderer, int x, int y, RGB color) {
     SDL_SetRenderDrawColor(renderer, (std::min(1.f, color.R) * 255), (std::min(1.f, color.G) * 255), (std::min(1.f, color.B) * 255), 255);
     SDL_RenderDrawPoint(renderer, x, y);
+    SDL_RenderPresent(renderer);
 }
 
 
@@ -130,10 +131,8 @@ void StandardRenderer::Render (SDL_Renderer* renderer, bool LAUNCH_WINDOW) {
                 img->set(x, y, color);
 
                 if (LAUNCH_WINDOW) {
-                    #pragma omp critical {
+                    #pragma omp critical 
                     updatePixel(renderer, x, y, color);
-                    }
-                    SDL_RenderPresent(renderer);
                 }
             }
         }

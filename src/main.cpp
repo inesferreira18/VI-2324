@@ -145,10 +145,8 @@ int main(int argc, char * argv[]) {
     if (LAUNCH_WINDOW) {
         std::cout << "Updating window...\n";
         for (int i = 0; i < H; i++) {
-            for (int j = 0; j < W; ++j) {
+            for (int j = 0; j < W; ++j)
                 myRender.updatePixel(renderer, j, i, img->getImage()[i * W + j].val[0], img->getImage()[i * W + j].val[1], img->getImage()[i * W + j].val[2]);
-                SDL_RenderPresent(renderer);
-            }
         }
     }
 
