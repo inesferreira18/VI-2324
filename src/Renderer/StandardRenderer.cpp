@@ -18,7 +18,6 @@ float floatRand(const float& min, const float& max) {
 
 void StandardRenderer::Render () {
     int W=0,H=0;  // resolution
-    int x,y;
 
     // get resolution from the camera
     Perspective* perspCam = dynamic_cast<Perspective*>(cam);
@@ -38,14 +37,13 @@ void StandardRenderer::Render () {
 
     // main rendering loop: get primary rays from the camera until done
     float sumR = 0.0f, sumG = 0.0f, sumB = 0.0f;
-    #pragma omp parallel default(none) shared(perspCam, W, H, sumR, sumG, sumB)
-    {
-        #pragma omp for reduction(+: sumR,sumG,sumB)
+    #pragma omp parallel for default(none) reduction(+: sumR,sumG,sumB)
         for (int y = 0; y < H; y++) {     // loop over rows
             for (int x = 0; x < W; x++) { // loop over columns
                 sumR = 0.0f;
                 sumG = 0.0f;
                 sumB = 0.0f;
+
 
                 // multiple samples per pixel
                 for (int ss = 0; ss < spp; ss++) {
@@ -67,6 +65,8 @@ void StandardRenderer::Render () {
                     // shade this intersection (shader) - remember: depth=0
                     RGB this_color = shd->shade(intersected, isect, 0);
 
+                    //color += this_color
+
                     sumR += this_color.R;
                     sumG += this_color.G;
                     sumB += this_color.B;
@@ -82,5 +82,5 @@ void StandardRenderer::Render () {
                 img->set(x, y, color);
             }
         }
-    }
+    
 }

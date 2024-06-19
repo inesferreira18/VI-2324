@@ -109,7 +109,7 @@ int main(int argc, const char * argv[]) {
 
     // declare the renderer
     // samples per pixel
-    int spp=64;     
+    int spp=2048;     
     StandardRenderer myRender (cam, &scene, img, shd, spp);
 
     // render
@@ -119,7 +119,7 @@ int main(int argc, const char * argv[]) {
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
     // save the image
-    img->Save("../src/MyImage_Rein.ppm");
+    img->Save("../src/MyImage_Rein_2048.ppm");
     
     fprintf (stdout, "Rendering time = %.3lf secs\n\n", cpu_time_used);
     
