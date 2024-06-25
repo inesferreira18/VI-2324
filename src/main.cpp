@@ -37,7 +37,7 @@ int main(int argc, char * argv[]) {
     clock_t start, end;
     double cpu_time_used;
 
-    bool LAUNCH_WINDOW = true;
+    bool LAUNCH_WINDOW = false;
 
     fs::path currentPath = fs::current_path();
     fs::path path = currentPath /".." / "src" / "Scene" / "tinyobjloader" / "models" / "cornell_box_VI.obj";
@@ -94,8 +94,8 @@ int main(int argc, char * argv[]) {
     scene.numLights++;
 
     // Image resolution
-    const int W= 1024;
-    const int H= 1024;
+    const int W= 720;
+    const int H= 720;
     
     img = new ImagePPM(W,H);
     
@@ -135,7 +135,7 @@ int main(int argc, char * argv[]) {
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
     // save the image
-    img->Save("../src/MyImage_Rein_2048.ppm");
+    img->Save("../src/Original_2048.ppm");
     
     fprintf (stdout, "Rendering time = %.3lf secs\n\n", cpu_time_used);
     

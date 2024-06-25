@@ -73,7 +73,7 @@ void StandardRenderer::Render (SDL_Renderer* renderer, bool LAUNCH_WINDOW) {
     perspCam->getResolution(&W, &H);
 
     // jitter
-    const bool jitter = false;
+    const bool jitter = true;
 
     // define number of threads
     int max_threads = omp_get_max_threads();
