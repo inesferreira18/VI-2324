@@ -9,4 +9,15 @@ Repositório destinado a guardar o trabalho realizado na cadeira de Visualizaç�
 | PG53951  | [João Braga](https://github.com/LykiFyar)                   |
 | PG54084  | [Marta Sá](https://github.com/findingmarta)                 |
 
+## Outputs
+
+### Clamp Tone Mapping
+![Original](Images/original_2048.png)
+
+### Reinhard Tone Mapping
+![Original](Images/rein_2048.png)
+
+### ACES Tone Mapping
+![Original](Images/ACES_2048.png)
+
 Nota Final: 15
